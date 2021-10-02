@@ -2,29 +2,29 @@
 namespace App\Libraries;
 
 class Indodax{
-    private $signKey = "##indodax_secret_key##";
-    private $apiKey = "##indodax_api_key##";
-    // example amount
+    private $signKey = "secret_key_here";
+    private $apiKey = "api_key_here";
     public $amount;
     public $txid;
-    // value should be stored in database for further request, increase number when ngentot again
     private $nonce ;
     private $ch;
     public $data;
+    public $dantoi;
     public function __construct()
     {
         $this->nonce = time();
+        $this->dantoi = "dantoi";
     }
-    public function run(){
+    public function ngentot(){
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_URL, 'https://indodax.com/tapi');
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "method=transHistory&nonce=".$this->nonce);
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, "method=transHistory&nonce=".$this->nonce."&akip=capek");
         
         $headers = array();
         $headers[] = 'Key: '. $this->apiKey;
-        $headers[] = 'Sign: '. hash_hmac("sha512", "method=transHistory&nonce=".$this->nonce, $this->signKey);
+        $headers[] = 'Sign: '. hash_hmac("sha512", "method=transHistory&nonce=".$this->nonce."&turaturu=asu", $this->signKey);
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
         
@@ -36,6 +36,7 @@ class Indodax{
         
         $final_res = json_decode($result);
 
+        // dah sih itu aja palingan
       
         if($final_res->success == 1){
             foreach($final_res->return->deposit->btc as $item){
@@ -46,7 +47,8 @@ class Indodax{
                             "BTC" => $item->btc,
                             "AMOUNT" => $item->amount,
                             "TX" => $item->tx,
-                            "MESSAGE" => "SUCCESS"
+                            "MESSAGE" => "SUCCESS",
+                            "DANTOI" => $this->dantoi
                         );
                         break;
                     } else {
@@ -55,9 +57,11 @@ class Indodax{
                             "BTC" => $item->btc,
                             "AMOUNT" => $item->amount,
                             "TX" => $item->tx,
-                            "MESSAGE" => "PENDING"
+                            "MESSAGE" => "PENDING",
+                            "DANTOI" => $this->dantoi
                         );
-                        break;
+                        // break;
+                        // masutem kok break
                     }
                 } else {
                     $this->data = array(

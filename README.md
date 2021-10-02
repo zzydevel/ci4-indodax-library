@@ -4,7 +4,7 @@ Codeigniter4 Indodax API Check Payment BTC Library
 # How to use
 - Place app/Libraries/Indodax.php in your project.
 - Call the Classes example :
-``
+<pre>
 // Something
 use App\Libraries\Indodax;
 Class Payment extend BaseController{
@@ -20,4 +20,4 @@ Class Payment extend BaseController{
 		print_r($data);
 	}
 }
-```
+</pre>

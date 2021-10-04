@@ -2,6 +2,7 @@
 namespace App\Libraries;
 
 class Indodax{
+    private $keterangan = "loh dantoi isine muk curl";
     private $signKey = "##indodax_secret_key##";
     private $apiKey = "##indodax_api_key##";
     // example amount
@@ -40,22 +41,23 @@ class Indodax{
         if($final_res->success == 1){
             foreach($final_res->return->deposit->btc as $item){
                 if($item->amount == $this->amount && $item->tx == $this->txid){
-                    if($item->status == "success"){
-                        $this->data = array(
-                            "STATUS" => "PAID",
-                            "BTC" => $item->btc,
-                            "AMOUNT" => $item->amount,
-                            "TX" => $item->tx,
-                            "MESSAGE" => "SUCCESS"
-                        );
-                        break;
-                    } else {
+                    if(!$item->status == "success"){
                         $this->data = array(
                             "STATUS" => strtoupper($item->status),
                             "BTC" => $item->btc,
                             "AMOUNT" => $item->amount,
                             "TX" => $item->tx,
-                            "MESSAGE" => "PENDING"
+                            "MESSAGE" => "PENDING",
+                            "NOTE" => $this->keterangan
+                        );
+                    } else {
+                        $this->data = array(
+                            "STATUS" => "PAID",
+                            "BTC" => $item->btc,
+                            "AMOUNT" => $item->amount,
+                            "TX" => $item->tx,
+                            "MESSAGE" => "SUCCESS",
+                            "NOTE" => $this->keterangan
                         );
                         break;
                     }
@@ -63,7 +65,8 @@ class Indodax{
                     $this->data = array(
                         "STATUS" => "UNPAID",
                         "AMOUNT" => 0,
-                        "MESSAGE" => "TX / Hash ID Not Found"
+                        "MESSAGE" => "TX / Hash ID Not Found",
+                        "NOTE" => $this->keterangan
                     );
                 }
             }
@@ -72,7 +75,5 @@ class Indodax{
             exit;
         }
     }
-
-    
 }
 
